@@ -48,7 +48,7 @@ namespace custom_file_system_watcher
 
             // Force Rename
             var testFileRenamed = Path.Combine(appData, "testFile.Renamed.txt");
-            File.Move(testFile, testFileRenamed, overwrite: true);
+            File.Copy(testFile, testFileRenamed, overwrite: true);
             Thread.Sleep(SPACING);
 
             // Prove that if the Excel file LastWriteTime changes, we'll see it
@@ -58,7 +58,14 @@ namespace custom_file_system_watcher
             {
                 Console.WriteLine();
                 Console.WriteLine("Proves that if the Excel file LastWriteTime changes, we'll see it:");
-                fileInfo.LastWriteTime = DateTime.Now;
+                try
+                {
+                    fileInfo.LastWriteTime = DateTime.Now;
+                }
+                catch
+                {
+                    Console.WriteLine("CANNOT CHANGE TIMESTAMP: EXCEL FILE IS ALREADY OPEN");
+                }
             }
             Thread.Sleep(SPACING);
 
@@ -87,6 +94,7 @@ namespace custom_file_system_watcher
             {
                 case WatcherChangeTypes.Created:
                     OnFeedBackNesterCreated(sender, e);
+                    Console.WriteLine($" LastWriteTime: {new FileInfo(e.FullPath).LastWriteTime}");
                     break;
                 case WatcherChangeTypes.Deleted:
                     Console.WriteLine($"Deleted: {e.Name}");
@@ -96,20 +104,30 @@ namespace custom_file_system_watcher
                     switch (ext)
                     {
                         case ".xlsx":
-                            Console.WriteLine($"Changed: {e.Name}");
+                            Console.Write($"Changed: {e.Name}");
                             break;
                         case ".txt":
-                            Console.WriteLine($"Changed: {e.Name} {File.ReadAllLines(e.FullPath).Last()}");
+                            try
+                            {
+                                Console.Write($"Changed: {e.Name} {File.ReadAllLines(e.FullPath).Last()}");
+                            }
+                            catch
+                            {
+                                Console.Write($"Changed: {e.Name} (in transition)");
+                            }
                             break;
                         case "":
+                            Console.Write($"Changed: {e.Name} (no extension)");
                             break;
                         default:
-                            Console.WriteLine($"The '{ext}' extension is not supported");
+                            Console.Write($"The '{ext}' extension is not supported");
                             break;
                     }
+                    Console.WriteLine($" LastWriteTime: {new FileInfo(e.FullPath).LastWriteTime}");
                     break;
                 case WatcherChangeTypes.Renamed:
-                    Console.WriteLine($"Renamed: {e.Name}");
+                    Console.Write($"Renamed: {e.Name}");
+                    Console.WriteLine($" LastWriteTime: {new FileInfo(e.FullPath).LastWriteTime}");
                     break;
                 default:
                     break;
@@ -118,7 +136,7 @@ namespace custom_file_system_watcher
 
         private void OnFeedBackNesterCreated(object source, FileSystemEventArgs e)
         {
-            Console.WriteLine($"Created: {e.Name}");
+            Console.Write($"Created: {e.Name}");
         }
     }
 }
