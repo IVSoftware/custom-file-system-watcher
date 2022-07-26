@@ -11,6 +11,7 @@ namespace custom_file_system_watcher
     {
         static void Main(string[] args)
         {
+            const int SPACING = 500;
             string appData = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "custom_file_system_watcher");
@@ -27,26 +28,30 @@ namespace custom_file_system_watcher
             // Force Delete (if exists)
             var testFile = Path.Combine(appData, "testFile.txt");
             File.Delete(testFile);
+            Thread.Sleep(SPACING);
 
             // Force Create + Change
             File.WriteAllText(
                     testFile, 
                     $"{DateTime.Now}{Environment.NewLine}");
-
-            Thread.Sleep(1000);
+            Thread.Sleep(SPACING);
 
 
             // Force 10 Changes
-            for (int i = 1; i < 11; i++)
+            for (int i = 1; i < 6; i++)
             {
                 // For testing purposes, overwrite the file each time.
                 File.AppendAllText(testFile, $"Change #{i}{Environment.NewLine}");
-                Thread.Sleep(1000);
+                Thread.Sleep(SPACING);
             }
 
             // Force Rename
             var testFileRenamed = Path.Combine(appData, "testFile.Renamed.txt");
             File.Move(testFile, testFileRenamed, overwrite: true);
+            Thread.Sleep(SPACING);
+
+            Console.WriteLine();
+            Console.WriteLine("Waiting for Excel file changes...");
             Console.ReadKey();
         }
     }
@@ -54,14 +59,15 @@ namespace custom_file_system_watcher
     {
         public MachineWatcher(string type, string directoryStock, string fileFilter)
         {
-            fw = new FileSystemWatcher(directoryStock, fileFilter);
-            fw.Created += onModified;
-            fw.Changed += onModified;
-            fw.Renamed += onModified;
-            fw.Deleted += onModified;
-            fw.EnableRaisingEvents = true;
+            watcher = new FileSystemWatcher(directoryStock, fileFilter);
+            watcher.Created += onModified;
+            watcher.Changed += onModified;
+            watcher.Renamed += onModified;
+            watcher.Deleted += onModified; 
+            // watcher.NotifyFilter = NotifyFilters.Size | NotifyFilters.LastWrite | NotifyFilters.CreationTime;
+            watcher.EnableRaisingEvents = true;
         }
-        FileSystemWatcher fw { get; }
+        FileSystemWatcher watcher { get; }
 
         private void onModified(object sender, FileSystemEventArgs e)
         {
@@ -74,10 +80,24 @@ namespace custom_file_system_watcher
                     Console.WriteLine($"Deleted: {e.Name}");
                     break;
                 case WatcherChangeTypes.Changed:
-                    Console.WriteLine($"Changed: {e.Name} {File.ReadAllLines(e.FullPath).Last()}");
+                    var ext = Path.GetExtension(e.FullPath);
+                    switch (ext)
+                    {
+                        case ".xlsx":
+                            Console.WriteLine($"Changed: {e.Name}");
+                            break;
+                        case ".txt":
+                            Console.WriteLine($"Changed: {e.Name} {File.ReadAllLines(e.FullPath).Last()}");
+                            break;
+                        case "":
+                            break;
+                        default:
+                            Console.WriteLine($"The '{ext}' extension is not supported");
+                            break;
+                    }
                     break;
                 case WatcherChangeTypes.Renamed:
-                    Console.WriteLine($"Name change: {e.Name}");
+                    Console.WriteLine($"Renamed: {e.Name}");
                     break;
                 default:
                     break;
