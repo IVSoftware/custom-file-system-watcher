@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32413.511
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "custom_file_system_watcher", "custom_file_system_watcher\custom_file_system_watcher.csproj", "{0A17D73C-A7A6-40FC-A3B1-68CABEA54467}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0A17D73C-A7A6-40FC-A3B1-68CABEA54467}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A17D73C-A7A6-40FC-A3B1-68CABEA54467}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A17D73C-A7A6-40FC-A3B1-68CABEA54467}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A17D73C-A7A6-40FC-A3B1-68CABEA54467}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A7D2D0DE-DF94-46A5-8A97-494953DE0A57}
+	EndGlobalSection
+EndGlobal
