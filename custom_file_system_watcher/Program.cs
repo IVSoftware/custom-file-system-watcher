@@ -51,6 +51,17 @@ namespace custom_file_system_watcher
             File.Move(testFile, testFileRenamed, overwrite: true);
             Thread.Sleep(SPACING);
 
+            // Prove that if the Excel file LastWriteTime changes, we'll see it
+            var excelFile = Path.Combine(appData, "ExcelTestFile.xlsx");
+            var fileInfo = new FileInfo(excelFile);
+            if(fileInfo.Exists)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Proves that if the Excel file LastWriteTime changes, we'll see it:");
+                fileInfo.LastWriteTime = DateTime.Now;
+            }
+            Thread.Sleep(SPACING);
+
             Console.WriteLine();
             Console.WriteLine("Waiting for Excel file changes...");
             Console.ReadKey();
