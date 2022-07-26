@@ -37,10 +37,11 @@ namespace custom_file_system_watcher
             Thread.Sleep(SPACING);
 
 
-            // Force 10 Changes
-            for (int i = 1; i < 6; i++)
+            // Force N Changes
+            var N = 5;
+            for (int i = 1; i <= N; i++)
             {
-                // For testing purposes, overwrite the file each time.
+                // Using Append because File.WriteAllText is two events not one.
                 File.AppendAllText(testFile, $"Change #{i}{Environment.NewLine}");
                 Thread.Sleep(SPACING);
             }
