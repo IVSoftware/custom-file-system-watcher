@@ -36,7 +36,6 @@ namespace custom_file_system_watcher
                     $"{DateTime.Now}{Environment.NewLine}");
             Thread.Sleep(SPACING);
 
-
             // Force N Changes
             var N = 5;
             for (int i = 1; i <= N; i++)
